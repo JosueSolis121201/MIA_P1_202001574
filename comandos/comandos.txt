@@ -1,0 +1,8 @@
+execute >path=/home/user/prueba.eea
+
+mkdisk >size=5 >unit=M >path=/home/user/Disco1.dsk
+mkdisk >size=5 >unit=M >path=/Desktop/MIA_P1_202001574/src/Disco1.dsk
+
+fdisk >unit=M >path=/home/user/Disco1.dsk  >name=Particion1 >size=1
+fdisk >path=/home/user/Disco1.dsk  >name=Particion1 >size=1
+

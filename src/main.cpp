@@ -2,8 +2,9 @@
 #include <fstream>
 #include "./analizador/analizador.h"
 using namespace std;
+#include <QCoreApplication>
 
-int main()
+int main(int argc, char *argv[])
 {
   cout << "*****************************************" << endl;
   cout << "***** JOSUE DANIEL SOLIS OSORIO ********" << endl;

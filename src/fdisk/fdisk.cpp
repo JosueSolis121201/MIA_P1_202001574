@@ -16,4 +16,8 @@ void fdisk::make_fdisk(fdisk *disco){
     cout << "path: " << disco->path << endl;
     cout << "size: " << disco->size << endl;
     cout << "unit: " << disco->unit << endl;
+    cout << "type: " << disco->type << endl;
+    cout << "fit: " << disco->fit << endl;
+    cout << "delete: " << disco->borrar << endl;
+    cout << "add: " << disco->add << endl;
 }

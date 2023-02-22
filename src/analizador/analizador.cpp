@@ -6,6 +6,14 @@
 #include "../execute/execute.h"
 #include "../fdisk/fdisk.h"
 #include "../rep/rep.h"
+#include "rmdisk.h"
+#include "mount.h"
+#include "unmount.h"
+#include "mkfs.h"
+#include "login.h"
+#include "logout.h"
+
+//mkdisk >size=5 >unit=M >path="/home/mis discos/Disco3.dsk"
 
 /*Funciones que devuelven el tipo y el valor de un parametro en strings ya en lowercase */
 string get_tipo_parametro(string parametro){
@@ -40,9 +48,18 @@ void analizar_mkdisk(char *parametros){
     parametros = strtok(NULL, " ");
     //Inicializamos nuestro disco
     mkdisk *disco = new mkdisk();
-    while(parametros != NULL){
+    std::string concatenar = "";
+    bool concatenarBolean = false;
+    while(parametros != NULL){   
         //Obtenemos el tipo y el valor del parametro actual
         string tmpParam = parametros;
+        std::string str = tmpParam;
+            char c = '"';
+            if (str.find(c) != std::string::npos) {
+                concatenar = concatenar + tmpParam+" ";
+                concatenarBolean=true;
+            }
+
         string tipo = get_tipo_parametro(tmpParam);
         string valor = get_valor_parametro(tmpParam);
         //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
@@ -52,10 +69,16 @@ void analizar_mkdisk(char *parametros){
             disco->path = valor;
         } else if (tipo == ">unit"){
             disco->unit = valor;
-        } else {
+        } else if (tipo == ">fit"){
+            disco->fit = valor;
+        }else {
             cout << "Parametro no aceptado en 'mkdisk': " << valor << endl;
         }
         parametros = strtok(NULL, " ");
+    }
+    //si es true se concatena con comillas
+    if(concatenarBolean){
+        disco->path = concatenar;
     }
     //Creamos el disco
     disco->make_mkdisk(disco);
@@ -84,34 +107,176 @@ void analizar_execute(char *parametros){
     disco->make_execute(disco);
 }
 
-
-void analizar_fdisk(char *parametros){
+void analizar_unmount(char *parametros){
     //Pasamos a la siguiente posicion
     parametros = strtok(NULL, " ");
     //Inicializamos nuestro disco
-    fdisk *disco = new fdisk();
+    unmount *disco = new unmount();
     while(parametros != NULL){
         //Obtenemos el tipo y el valor del parametro actual
         string tmpParam = parametros;
         string tipo = get_tipo_parametro(tmpParam);
         string valor = get_valor_parametro(tmpParam);
         //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if (tipo == ">id"){
+            disco->id = valor;
+        } else {
+            cout << "Parametro no aceptado en 'unmount': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //Creamos el disco
+    disco->make_unmount(disco);
+}
+
+void analizar_rmdisk(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    rmdisk *disco = new rmdisk();
+    std::string concatenar = "";
+    bool concatenarBolean = false;
+    while(parametros != NULL){
+        cout << "Parametro no aceptadoadasdasdsadassdda en 'rmdisk': " << parametros << endl;
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        std::string str = tmpParam;
+            char c = '"';
+            if (str.find(c) != std::string::npos) {
+                concatenar = concatenar + tmpParam+" ";
+                concatenarBolean=true;
+            }
+
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if(tipo == ">path"){
+             disco->path = valor;
+        }else {
+            cout << "Parametro no aceptado en 'rmdisk': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //si es true se concatena con comillas
+    if(concatenarBolean){
+        disco->path = concatenar;
+    }
+    //Creamos el disco
+    disco->make_rmdisk(disco);
+}
+
+
+void analizar_fdisk(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    fdisk *disco = new fdisk();
+    std::string concatenar = "";
+    bool concatenarBolean = false;
+    bool concatenarPath = false;
+    int contador=0;
+
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        std::string str = tmpParam;
+            char c = '"';
+            if (str.find(c) != std::string::npos&& contador<2) {
+                concatenar = concatenar + tmpParam+" ";
+                concatenarBolean=true;
+                contador++;
+
+            }
+
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
         if(tipo == ">size"){
             disco->size = stoi(valor);
         } else if (tipo == ">path"){
+            concatenarPath=true;
             disco->path = valor;
         } else if (tipo == ">name"){
             disco->name = valor;
         } else if (tipo == ">unit"){
             disco->unit = valor;
+        }else if (tipo == ">type"){
+            disco->type = valor;
+        } else if (tipo == ">fit"){
+            disco->fit = valor;
+        } else if (tipo == ">borrar"){
+            disco->borrar = valor;
+        }else if (tipo == ">add"){
+            disco->add = valor;
         }else {
-            cout << "Parametro no aceptado en 'mkdisk': " << valor << endl;
+            cout << "Parametro no aceptado en 'fdisk': " << valor << endl;
         }
         parametros = strtok(NULL, " ");
+        }
+    if(concatenarBolean){
+        if(concatenarPath){
+            disco->path = concatenar;
+            concatenarPath=false;
+        }
+
+    }
     //Creamos el disco
     disco->make_fdisk(disco);
+//fdisk >add=-500 >size=10 >unit=K >path="/home/mis discos/Disco4.dsk" >name="Particion4"
+    //fdisk >size=1 >type=L >unit=M >fit=bf >path="/mis discos/Disco3.dsk" >name="Particion3"
 }
+
+
+
+
+void analizar_mount(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    mount *disco = new mount();
+    std::string concatenar = "";
+    bool concatenarBolean = false;
+    bool concatenarPath = false;
+    int contador=0;
+
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        std::string str = tmpParam;
+            char c = '"';
+            if (str.find(c) != std::string::npos&& contador<2) {
+                concatenar = concatenar + tmpParam+" ";
+                concatenarBolean=true;
+                contador++;
+
+            }
+
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+         if (tipo == ">path"){
+            concatenarPath=true;
+            disco->path = valor;
+        } else if (tipo == ">name"){
+            disco->name = valor;
+        } else {
+            cout << "Parametro no aceptado en 'mount': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+        }
+    if(concatenarBolean){
+        if(concatenarPath){
+            disco->path = concatenar;
+            concatenarPath=false;
+        }
+
+    }
+    //Creamos el disco
+    disco->make_mount(disco);
+//fdisk >add=-500 >size=10 >unit=K >path="/home/mis discos/Disco4.dsk" >name="Particion4"
+    //fdisk >size=1 >type=L >unit=M >fit=bf >path="/mis discos/Disco3.dsk" >name="Particion3"
 }
+
 
 void analizar_rep(char *parametros){
     //Pasamos a la siguiente posicion
@@ -120,6 +285,69 @@ void analizar_rep(char *parametros){
     rep *disco = new rep();
     
     disco->make_rep();
+
+}
+
+
+void analizar_mkfs(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    mkfs *disco = new mkfs();
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if (tipo == ">id"){
+            disco->id = valor;
+        } else if(tipo == ">type"){
+            disco->type = valor;
+        }else if(tipo == ">fs"){
+            disco->fs = valor;
+        } else {
+            cout << "Parametro no aceptado en 'mkfs': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //Creamos el disco
+    disco->make_mkfs(disco);
+}
+
+void analizar_login(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    login *disco = new login();
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if (tipo == ">user"){
+            disco->user = valor;
+        } else if(tipo == ">pass"){
+            disco->pass = valor;
+        }else if(tipo == ">id"){
+            disco->id = valor;
+        } else {
+            cout << "Parametro no aceptado en 'login': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //Creamos el disco
+    disco->make_login(disco);
+}
+
+void analizar_logout(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    logout *disco = new logout();
+
+    disco->make_logout();
 
 }
 
@@ -134,7 +362,19 @@ void analizar(char *comando) {
         analizar_fdisk(token);
     }else if(strcasecmp(token, "rep") == 0){
         analizar_rep(token);
-    } else {
+    } else if(strcasecmp(token, "rmdisk") == 0){
+        analizar_rmdisk(token);
+    }else if(strcasecmp(token, "mount") == 0){
+        analizar_mount(token);
+    } else if(strcasecmp(token, "unmount") == 0){
+        analizar_unmount(token);
+    } else if(strcasecmp(token, "mkfs") == 0){
+        analizar_mkfs(token);
+    }else if(strcasecmp(token, "login") == 0){
+        analizar_login(token);
+    }else if(strcasecmp(token, "logout") == 0){
+        analizar_logout(token);
+    }else {
         cout << "Comando no aceptado :c" << endl;
     }
 }

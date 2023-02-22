@@ -12,6 +12,11 @@ public:
     string path="";
     string name="";
     string unit="";
+    string type="";
+    string fit="";
+    string full="";
+    string borrar="";
+    string add="";
     void make_fdisk(fdisk *disco);
 };
 

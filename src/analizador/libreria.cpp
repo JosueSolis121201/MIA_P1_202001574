@@ -27,8 +27,16 @@ struct Partition Libreria::CrearPartition(){
     return part;
 }
 
+std::string Libreria::ArregloCharAString(char charArray[], int arregloTamanio){
+    std::string retorno = "";
+    for (int i = 0; i < arregloTamanio; i++) {
+            retorno = retorno + charArray[i];
+    }
+    return retorno;
+}
+
 void Libreria::IniciarArray(char charArray[], int arregloTamanio, char caracter){
-for (int i = 0; i < arregloTamanio; i++) {
+    for (int i = 0; i < arregloTamanio; i++) {
             charArray[i] = caracter;
     }
 }
@@ -42,19 +50,19 @@ void Libreria::LlenarArray(char *charArray, int arregloTamanio, std::string path
     }
 }
 
-bool Libreria::StringIgual(std::string a, std::string b){
+bool Libreria::StringIgual(std::string entradaA, std::string entradaB){
 
-        std::string compararA = a;
-        std::string compararB = b;
+        std::string compararA = entradaA;
+        std::string compararB = entradaB;
 
         boost::trim(compararA);
         boost::trim(compararB);
 
-        unsigned int sz = a.size();
-        if (b.size() != sz)
+        unsigned int sz = compararA.size();
+        if (compararB.size() != sz)
             return false;
         for (unsigned int i = 0; i < sz; ++i)
-            if (tolower(a[i]) != tolower(b[i]))
+            if (tolower(compararA[i]) != tolower(compararB[i]))
                 return false;
         return true;
 

@@ -40,7 +40,7 @@ void mkdisk::make_mkdisk(mkdisk *disco){
 
     FILE * archivo;
     struct MBR mbr = this->CrearMBR();
-    archivo= fopen(&disco->path[0],"wb+");
+    archivo= fopen(&disco->path[0],"rb+");
     fwrite(&mbr,sizeof(struct MBR),1,archivo);
     fclose(archivo);
 

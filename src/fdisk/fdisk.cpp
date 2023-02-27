@@ -41,17 +41,26 @@ void fdisk::make_fdisk(fdisk *disco){
     fclose(archivo);
     //------------------------agregando nombre a la particion----------------------------------
 
-/*
-    for(int0){
 
-        this->StringIgual(mbr.mbr_partitions[i].part_name,disco->name)
+    for(int i=0;i<4;i++){
+        std::string partitionName = this->ArregloCharAString(mbr.mbr_partitions[i].part_name,16);
+        if(this->StringIgual(partitionName,disco->name)){
+            std::cout<<"Particion con nombre repetido"<<std::endl;
+            return;
+        }
+
+
+
+
+
     }
-*/
+
 
 
     for(int i=0;i<4;i++){
-
-        if(this->StringIgual(string(mbr.mbr_partitions[i].part_name),"")){
+        std::string partitionName = this->ArregloCharAString(mbr.mbr_partitions[i].part_name,16);
+        bool cond = this->StringIgual(partitionName,"");
+        if(cond){
             this->LlenarArray(mbr.mbr_partitions[i].part_name,16,disco->name);
 
             // comprobando unit
@@ -100,14 +109,13 @@ void fdisk::make_fdisk(fdisk *disco){
             }
             //break termino fdisk particion encontrada
             archivo= fopen(fileName,"rb+");
+            //fseek(archivo,sizeof(struct MBR),SEEK_SET);
             fwrite(&mbr,sizeof(struct MBR),1,archivo);
             fclose(archivo);
-            break;
-    }else{
-            cout<<"Particion con nombre repetido"<<endl;
-        }
+            return;
+    }
     }
 
 
-
-    }
+    std::cout<<"No se pudo completar FDISK"<<std::endl;
+}

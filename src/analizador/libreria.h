@@ -27,6 +27,7 @@ class Libreria
 {
 public:
     Libreria();
+    std::string ArregloCharAString(char *charArray, int arregloTamanio);
     void CrearDirectorio(std::string path);
     void CrearArchivo(std::string path,int tamanio);
     void IniciarArray(char *charArray, int arregloTamanio, char caracter);

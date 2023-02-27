@@ -20,7 +20,12 @@ SOURCES += main.cpp \
     analizador/unmount.cpp \
     analizador/mkfs.cpp \
     analizador/login.cpp \
-    analizador/logout.cpp
+    analizador/logout.cpp \
+    analizador/mkgrp.cpp \
+    analizador/rmgrp.cpp \
+    analizador/mkusr.cpp \
+    analizador/rmusr.cpp \
+    analizador/libreria.cpp
 
 HEADERS += \
     rep/rep.h \
@@ -33,4 +38,9 @@ HEADERS += \
     analizador/unmount.h \
     analizador/mkfs.h \
     analizador/login.h \
-    analizador/logout.h
+    analizador/logout.h \
+    analizador/mkgrp.h \
+    analizador/rmgrp.h \
+    analizador/mkusr.h \
+    analizador/rmusr.h \
+    analizador/libreria.h

@@ -7,33 +7,43 @@
 #include <unistd.h>
 #include <iostream>
 #include "../analizador/analizador.h"
-#include <filesystem>
+
+
 
 mkdisk::mkdisk(){}
 
 void mkdisk::make_mkdisk(mkdisk *disco){
     //instrucciones del "mkdisk"
+
     cout << "unit: " << disco->unit << endl;
     cout << "path: " << disco->path << endl;
     cout << "size: " << disco->size << endl;
     cout << "fit: " << disco->fit << endl;
+    if(size <= 0){
+        std::cout<<"size es negativo --ERROR"<<std::endl;
+        return;
+    }
 
-/*
-    //Creando la ruta
-    std::filesystem::create_directories(disco->path);
-    //Obtenemos la unidaddel archivo
-    std::string fileUnit=disco->unit;
-    // Creando pathing donde se enviara el archivo creado
-    std::string pathq = disco->path;
+    if (this->StringIgual(disco->unit,"m") || this->StringIgual(disco->unit,"")){
+        disco->size=disco->size*1024;
+    }else if(!this->StringIgual(disco->unit,"k")){
+        cout<<"Unidad no aceptada"<<endl;
+        return;
+    }
 
-    FILE *archivo = fopen(pathq.c_str(), "wb");
-    cout << "pruebaaaaaaaaaa: " << path.c_str() << endl;
+    std::string nombreDirectorio= this->DireccionArchivo(disco->path);
+    std::string nombreArchivo= this->NombreArchivo(disco->path);
 
-    fseek(archivo, 0, SEEK_SET);
-    char cantidad[disco->size];
-    fwrite(&cantidad,0,1,archivo);
+    this->CrearDirectorio(nombreDirectorio);
+
+    this->CrearArchivo(disco->path,disco->size);
+
+    FILE * archivo;
+    struct MBR mbr = this->CrearMBR();
+    archivo= fopen(&disco->path[0],"wb+");
+    fwrite(&mbr,sizeof(struct MBR),1,archivo);
     fclose(archivo);
-    std::cout << "Creando archivo binario nuevo"<< std::endl;*/
+
 }
 
     

@@ -12,10 +12,14 @@
 #include "mkfs.h"
 #include "login.h"
 #include "logout.h"
+#include "mkgrp.h"
+#include "rmgrp.h"
+#include "mkusr.h"
+#include "rmusr.h"
 
 //mkdisk >size=5 >unit=M >path="/home/mis discos/Disco3.dsk"
 
-/*Funciones que devuelven el tipo y el valor de un parametro en strings ya en lowercase */
+/*Funcione s que devuelven el tipo y el valor de un parametro en strings ya en lowercase */
 string get_tipo_parametro(string parametro){
     //Iteramos hasta obtener el tipo del parametro
     string tipo = "";
@@ -351,29 +355,174 @@ void analizar_logout(char *parametros){
 
 }
 
+void analizar_mkgrp(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    mkgrp *disco = new mkgrp();
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if (tipo == ">name"){
+            disco->name = valor;
+
+        } else {
+            cout << "Parametro no aceptado en 'mkgrp': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //Creamos el disco
+    disco->make_mkgrp(disco);
+}
+
+void analizar_rmgrp(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    rmgrp *disco = new rmgrp();
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if (tipo == ">name"){
+            disco->name = valor;
+
+        } else {
+            cout << "Parametro no aceptado en 'rmgrp': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //Creamos el disco
+    disco->make_rmgrp(disco);
+}
+
+void analizar_mkusr(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    mkusr *disco = new mkusr();
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if (tipo == ">user"){
+            disco->user = valor;
+
+        } else if (tipo == ">pass"){
+            disco->pass = valor;
+
+        }else if (tipo == ">grp"){
+            disco->grp = valor;
+
+        }else {
+            cout << "Parametro no aceptado en 'mkusr': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //Creamos el disco
+    disco->make_mkusr(disco);
+}
+
+void analizar_rmusr(char *parametros){
+    //Pasamos a la siguiente posicion
+    parametros = strtok(NULL, " ");
+    //Inicializamos nuestro disco
+    rmusr *disco = new rmusr();
+    while(parametros != NULL){
+        //Obtenemos el tipo y el valor del parametro actual
+        string tmpParam = parametros;
+        string tipo = get_tipo_parametro(tmpParam);
+        string valor = get_valor_parametro(tmpParam);
+        //Verificamos cual parametro es para inicializar el objeto (los parametros ya vienen en lowercase)
+        if (tipo == ">user"){
+            disco->user = valor;
+
+        } else {
+            cout << "Parametro no aceptado en 'rmusr': " << valor << endl;
+        }
+        parametros = strtok(NULL, " ");
+    }
+    //Creamos el disco
+    disco->make_rmusr(disco);
+}
+
+
+
+void analizarCadena(std::string str){
+    str=str+'\n';
+    int strLength = str.length();
+
+    string concatenacion ="";
+    for(int i =0; i<strLength;i++){
+
+        if(str[i]=='\n'){
+            analizar(&concatenacion[0]);
+            concatenacion="";
+
+        }else{
+            concatenacion=concatenacion+str[i];
+        }
+
+
+
+
+    }
+
+
+}
+
 /*Funcion que define que comando es el que hay que ejecutar (se recibe un puntero del comando)*/
 void analizar(char *comando) {
     char *token = strtok(comando, " ");
     if(strcasecmp(token, "mkdisk") == 0){
+        cout<<"----------------------MKDISK--------------------"<<endl;
         analizar_mkdisk(token);
     }else if(strcasecmp(token, "execute") == 0){
+        cout<<"----------------------execute--------------------"<<endl;
         analizar_execute(token);
     }else if(strcasecmp(token, "fdisk") == 0){
+        cout<<"----------------------fdisk--------------------"<<endl;
         analizar_fdisk(token);
     }else if(strcasecmp(token, "rep") == 0){
+        cout<<"----------------------rep--------------------"<<endl;
         analizar_rep(token);
     } else if(strcasecmp(token, "rmdisk") == 0){
+        cout<<"----------------------rmdisk--------------------"<<endl;
         analizar_rmdisk(token);
     }else if(strcasecmp(token, "mount") == 0){
+        cout<<"----------------------mount--------------------"<<endl;
         analizar_mount(token);
     } else if(strcasecmp(token, "unmount") == 0){
+        cout<<"----------------------unmount--------------------"<<endl;
         analizar_unmount(token);
     } else if(strcasecmp(token, "mkfs") == 0){
+        cout<<"----------------------mkfs--------------------"<<endl;
         analizar_mkfs(token);
     }else if(strcasecmp(token, "login") == 0){
+        cout<<"----------------------login--------------------"<<endl;
         analizar_login(token);
     }else if(strcasecmp(token, "logout") == 0){
+        cout<<"----------------------logout--------------------"<<endl;
         analizar_logout(token);
+    }else if(strcasecmp(token, "mkgrp") == 0){
+        cout<<"----------------------mkgrp--------------------"<<endl;
+        analizar_mkgrp(token);
+    }else if(strcasecmp(token, "rmgrp") == 0){
+        cout<<"----------------------rmgrp--------------------"<<endl;
+        analizar_rmgrp(token);
+    }else if(strcasecmp(token, "mkusr") == 0){
+        cout<<"----------------------mkusr--------------------"<<endl;
+        analizar_mkusr(token);
+    }else if(strcasecmp(token, "rmusr") == 0){
+        cout<<"----------------------rmusr--------------------"<<endl;
+        analizar_rmusr(token);
     }else {
         cout << "Comando no aceptado :c" << endl;
     }

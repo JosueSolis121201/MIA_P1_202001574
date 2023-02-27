@@ -2,9 +2,9 @@
 #define MKDISK_H
 
 #include <iostream>
+#include "../analizador/libreria.h"
 
-
-class mkdisk
+class mkdisk : public Libreria
 {
 public:
     mkdisk();

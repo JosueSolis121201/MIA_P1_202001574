@@ -2,9 +2,10 @@
 #define FDISK_H
 
 #include <iostream>
+#include "../analizador/libreria.h"
 using namespace std;
 
-class fdisk
+class fdisk : public Libreria
 {
 public:
     fdisk();

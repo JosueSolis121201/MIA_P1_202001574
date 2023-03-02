@@ -18,7 +18,7 @@ struct Partition{
 } ;
 
 struct MBR{
-
+  int mbr_tamano;
   struct Partition mbr_partitions[4];
 } ;
 
@@ -32,10 +32,20 @@ public:
     void CrearArchivo(std::string path,int tamanio);
     void IniciarArray(char *charArray, int arregloTamanio, char caracter);
     void LlenarArray(char* charArray,int arregloTamanio,std::string path);
+    //probar
+    void OrdenarParticionesActivasDondeEmpiezan(struct MBR particiones);
+    void OrdenarParticionesActivasEInactivas(struct MBR particiones);
+    void ParticionFirstFit(struct MBR particiones);
+    void ParticionBestFit(struct MBR particiones);
+
+
     std::string NombreArchivo(std::string path);
     std::string DireccionArchivo(std::string path);
 
     bool StringIgual(std::string a, std::string b);
+    //probar
+    bool NoHayParticiones(struct MBR particiones);
+    bool noParticionesDisponibles(struct MBR particiones);
 
     struct MBR CrearMBR();
     struct Partition CrearPartition();

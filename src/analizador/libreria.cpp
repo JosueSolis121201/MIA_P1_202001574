@@ -31,6 +31,13 @@ struct Partition Libreria::CrearPartition(){
 }
 
 
+struct Partition Libreria::EliminarParticion(struct Partition particion){
+    //setear todos sus valores a 0
+    //usar funcion crearParticion
+    particion=CrearPartition();
+    return particion;
+}
+
 bool Libreria::NoHayParticiones(struct MBR mbr){
     bool noHayParticiones=false;
 
@@ -68,19 +75,154 @@ bool Libreria::noParticionesDisponibles(struct MBR mbr){ //SABER SI ESTA LLENO O
     return noParticionesDisponibles;
 }
 
-void Libreria::ParticionBestFit(struct MBR mbr){
+struct MBR Libreria::ParticionWorstFit(struct MBR mbr, int add){
+      int espacioEncontrado=0;
+      int Inicial=0;
+      int Final=0;
+      int tamañoRequerido=0;
+      int espacioMasAmplio=0;
+      int espacioActual=0;
+      int seEncontroEn=0;
+      int tamañoArchivo = mbr.mbr_tamano;
+
+      for(int i=0; i<4;i++){
+          if(mbr.mbr_partitions[i].part_status=='0'){
+              if(mbr.mbr_partitions[i].part_s+add>=0){
+                 tamañoRequerido=mbr.mbr_partitions[i].part_s+add;
+                  break;
+              }else{
+                  std::cout<<"ADD DA VALORES NEGATIVOS AL ESPACIO DE LA PARTICION"<<std::endl;
+                  break;
+              }
+
+
+          }
+      }
+
+      bool primero=true;
+      for(int i=0; i<4;i++){
+
+          //caso si es el espacio esta en primera posicion
+          if(mbr.mbr_partitions[i].part_status=='1'&&primero){
+              primero=false;
+              //definiendo limites
+              Inicial=mbr.mbr_partitions[i].part_start;
+              Final=mbr.mbr_partitions[i].part_start+mbr.mbr_partitions[i].part_s;
+              //usando limites
+
+              if(tamañoRequerido<Inicial){
+                  //insertando
+                   espacioActual=Inicial;
+                   if(espacioActual>espacioMasAmplio){
+                        espacioMasAmplio=espacioActual;
+                        std::cout<<espacioMasAmplio<<"-----"<<espacioActual<<std::endl;
+                        seEncontroEn=0;
+                   }
+                   std::cout<<"SE USO EL PRIMERO INICIO"<<std::endl;
+
+              }else if(Final<tamañoRequerido&&Final+tamañoRequerido<=tamañoArchivo){
+                  espacioActual=tamañoArchivo-Final;
+                  if(espacioActual>espacioMasAmplio){
+                       espacioMasAmplio=espacioActual;
+                       std::cout<<espacioMasAmplio<<"-----"<<espacioActual<<std::endl;
+                       seEncontroEn=Final;
+                  }
+                  std::cout<<"SE USO EL PRIMERO FINAL"<<std::endl;
+
+              }
+
+              std::cout<<"SE USO EL PRIMERO PASANDO AL SIGUIENTE"<<std::endl;
+          }
+
+          //si el espacio esta entre particiones
+          if(mbr.mbr_partitions[i].part_status=='1'&&i<3){
+              int inicialDer=0;
+              int finalDer=0;
+              //definiendo limites
+              //particion a la izquierda
+              Inicial=mbr.mbr_partitions[i].part_start;
+              Final=mbr.mbr_partitions[i].part_start+mbr.mbr_partitions[i].part_s;
+
+              //particion a la derecha
+               std::cout<<"*****************************************************"<<std::endl;
+
+              if(mbr.mbr_partitions[i+1].part_status=='1'&&i<3){
+                   std::cout<<"*****************************************************"<<std::endl;
+                  inicialDer=mbr.mbr_partitions[i+1].part_start;
+                  finalDer=mbr.mbr_partitions[i+1].part_start+mbr.mbr_partitions[i+1].part_s;
+                  std::cout<<inicialDer<<"finalIZ " <<finalDer<<std::endl;
+
+              }
+
+              espacioEncontrado=inicialDer-Final;
+                std::cout<<espacioEncontrado<<"SE ENCONTRO UN ESPACIO ENTRE PARTICIONES DE " <<finalDer<<std::endl;
+              if(espacioEncontrado>tamañoRequerido){
+                  espacioActual=espacioEncontrado;
+                  if(espacioActual>espacioMasAmplio){
+                       espacioMasAmplio=espacioActual;
+                       std::cout<<espacioMasAmplio<<"-----"<<espacioActual<<std::endl;
+                       seEncontroEn=Final;
+                  }
+                  std::cout<<"SE USO EL EL ESPACIO ENTRE PARTICION"<<std::endl;
+
+              }
+              std::cout<<"SE USO EL EL ESPACIO ENTRE PASANDO AL SIGUIENTE"<<std::endl;
+          }
+
+          // si el espacio esta al final
+          if(mbr.mbr_partitions[i].part_status=='1'&&i==3){
+              Inicial=mbr.mbr_partitions[i].part_start;
+              Final=mbr.mbr_partitions[i].part_start+mbr.mbr_partitions[i].part_s;
+              std::cout<<tamañoArchivo<<"-----"<<Final<<"-----"<<i<<std::endl;
+
+              if(tamañoRequerido<=(tamañoArchivo-Final)){
+                  espacioActual=tamañoArchivo-Final;
+                  if(espacioActual>espacioMasAmplio){
+                       espacioMasAmplio=espacioActual;
+                       std::cout<<espacioMasAmplio<<"-----"<<espacioActual<<std::endl;
+                       seEncontroEn=Final;
+                  }
+                  std::cout<<"SE USO EL EL ESPACIO ULTIMO"<<std::endl;
+
+              }
+
+          }
+     std::cout<<"S%%%%%%%%%%%%%%%%%%%%%%%%% "<<i<<std::endl;
+      }
+     std::cout<<"Se encontr el espacio mas amplio de: "<<espacioMasAmplio<<"En la posicion: "<<seEncontroEn<<" TAMAÑO REQUERIDO DE:"<<tamañoRequerido<<std::endl;
+     if(espacioMasAmplio>tamañoRequerido){
+         mbr.mbr_partitions[0].part_start = seEncontroEn;
+         mbr.mbr_partitions[0].part_s = tamañoRequerido;
+         mbr.mbr_partitions[0].part_status='1';
+         std::cout<<"SE EJECUTO CORRECTAMENTE "<<std::endl;
+     }else if(espacioMasAmplio<=tamañoRequerido){
+         std::cout<<"EL ESPACIO ENCONTRADO ES INSUFICIENTE PARA LA PARTICION"<<std::endl;
+     }
+     return mbr;
+}
+
+struct MBR Libreria::ParticionBestFit(struct MBR mbr,int add){
     int tamañoArchivo = mbr.mbr_tamano;
     int espacioMenosAmplio=tamañoArchivo;
     int espacioActual=0;
     int seEncontroEn=0;
     int espacioEncontrado=0;
-
     int Inicial=0;
     int Final=0;
+    int tamañoRequerido;
 
 
-    int tamañoRequerido=1000;
-
+    for(int i=0; i<4;i++){
+        if(mbr.mbr_partitions[i].part_status=='0'){
+            if(mbr.mbr_partitions[i].part_s+add>=0){
+               tamañoRequerido=mbr.mbr_partitions[i].part_s+add;
+                break;
+            }else{
+                std::cout<<"ADD DA VALORES NEGATIVOS AL ESPACIO DE LA PARTICION"<<std::endl;
+                break;
+            }
+        }
+    }
 
     bool primero=true;
     for(int i=0; i<4;i++){
@@ -114,7 +256,7 @@ void Libreria::ParticionBestFit(struct MBR mbr){
 
             }
 
-            std::cout<<"SE USO EL PRIMERO PASANDO AL SIGUIENTE"<<std::endl;
+            std::cout<<"SE USO EL PRIMERO PASANDO AL SIGUIENTE+++++++++++++++++++++++++++++"<<std::endl;
         }
 
         //si el espacio esta entre particiones
@@ -149,7 +291,7 @@ void Libreria::ParticionBestFit(struct MBR mbr){
                 std::cout<<"SE USO EL EL ESPACIO ENTRE PARTICION"<<std::endl;
 
             }
-            std::cout<<"SE USO EL EL ESPACIO ENTRE PASANDO AL SIGUIENTE"<<std::endl;
+            std::cout<<"SE USO EL EL ESPACIO ENTRE PASANDO AL SIGUIENTE+++++++++++++++++++"<<std::endl;
         }
 
         // si el espacio esta al final
@@ -171,9 +313,9 @@ void Libreria::ParticionBestFit(struct MBR mbr){
 
         }
    std::cout<<"S%%%%%%%%%%%%%%%%%%%%%%%%% "<<i<<std::endl;
-   std::cout<<"espacio menos amplio de: "<<espacioMenosAmplio<<"posicion: "<<seEncontroEn<<std::endl;
+   std::cout<<"EspMenosAmplio"<<espacioMenosAmplio<<"posicion:"<<seEncontroEn<<"Tamañoarchivo "<<tamañoArchivo<<"TamREQ"<<tamañoRequerido<<std::endl;
     }
-   std::cout<<"Se encontr el espacio menos amplio de: "<<espacioMenosAmplio<<"En la posicion: "<<seEncontroEn<<std::endl;
+   std::cout<<"EspMenosAmplio"<<espacioMenosAmplio<<"posicion:"<<seEncontroEn<<"Tamañoarchivo "<<tamañoArchivo<<"TamREQ"<<tamañoRequerido<<std::endl;
    if(espacioMenosAmplio==tamañoArchivo){
        std::cout<<"No se encontro espacio suficente para la nueva particion"<<std::endl;
 
@@ -184,10 +326,10 @@ void Libreria::ParticionBestFit(struct MBR mbr){
 
    }
 
-
+return mbr;
 }
 
-void Libreria::ParticionFirstFit(struct MBR mbr){
+struct MBR Libreria::ParticionFirstFit(struct MBR mbr, int add){
     int espacioEncontrado=0;
     int Inicial=0;
     int Final=0;
@@ -197,8 +339,13 @@ void Libreria::ParticionFirstFit(struct MBR mbr){
     //obteniendo el tamaño requerido
     for(int i=0; i<4;i++){
         if(mbr.mbr_partitions[i].part_status=='0'){
-            tamañoRequerido=mbr.mbr_partitions[i].part_s;
-            break;
+            if(mbr.mbr_partitions[i].part_s+add>=0){
+               tamañoRequerido=mbr.mbr_partitions[i].part_s+add;
+                break;
+            }else{
+                std::cout<<"ADD DA VALORES NEGATIVOS AL ESPACIO DE LA PARTICION"<<std::endl;
+                break;
+            }
         }
     }
     for(int i=0; i<4;i++){
@@ -215,12 +362,14 @@ void Libreria::ParticionFirstFit(struct MBR mbr){
                  mbr.mbr_partitions[0].part_start = 0;
                  mbr.mbr_partitions[0].part_s = tamañoRequerido;
                  mbr.mbr_partitions[0].part_status='1';
+
                  std::cout<<"SE USO EL PRIMERO INICIO"<<std::endl;
                  break;
             }else if(Final<tamañoRequerido&&Final+tamañoRequerido<=tamañoArchivo){
                 mbr.mbr_partitions[0].part_start = Final+tamañoRequerido;
                 mbr.mbr_partitions[0].part_s = tamañoRequerido;
                 mbr.mbr_partitions[0].part_status='1';
+
                 std::cout<<"SE USO EL PRIMERO FINAL"<<std::endl;
                 break;
             }
@@ -251,6 +400,7 @@ void Libreria::ParticionFirstFit(struct MBR mbr){
                 mbr.mbr_partitions[0].part_start = Final;
                 mbr.mbr_partitions[0].part_s = tamañoRequerido;
                 mbr.mbr_partitions[0].part_status='1';
+
                 std::cout<<"SE USO EL EL ESPACIO ENTRE PARTICION"<<std::endl;
                 break;
             }
@@ -266,6 +416,7 @@ void Libreria::ParticionFirstFit(struct MBR mbr){
                 mbr.mbr_partitions[0].part_start = Final;
                 mbr.mbr_partitions[0].part_s = tamañoRequerido;
                 mbr.mbr_partitions[0].part_status='1';
+
                 std::cout<<"SE USO EL EL ESPACIO ULTIMO"<<std::endl;
                 break;
             }
@@ -273,10 +424,12 @@ void Libreria::ParticionFirstFit(struct MBR mbr){
         }
 
     }
+
+    return mbr;
 }
 
 
-void Libreria::OrdenarParticionesActivasDondeEmpiezan(struct MBR mbr){
+struct MBR Libreria::OrdenarParticionesActivasDondeEmpiezan(struct MBR mbr){
     Partition aux;
      //primer ordenamiento
     //ordenamienton por valor
@@ -290,9 +443,11 @@ void Libreria::OrdenarParticionesActivasDondeEmpiezan(struct MBR mbr){
         }
     }
 
+    return mbr;
+
 }
 
-void Libreria::OrdenarParticionesActivasEInactivas(struct MBR mbr){
+struct MBR Libreria::OrdenarParticionesActivasEInactivas(struct MBR mbr){
     Partition aux;
     for(int i=0; i<3;i++){
             for(int j=0; j<3-i; j++){
@@ -306,6 +461,8 @@ void Libreria::OrdenarParticionesActivasEInactivas(struct MBR mbr){
             }
         }
     }
+
+    return mbr;
 }
 
 std::string Libreria::ArregloCharAString(char charArray[], int arregloTamanio){
@@ -353,9 +510,9 @@ void Libreria::CrearArchivo(std::string path,int tamanioKB){
 
     char* fileName = &path[0];
     FILE * file = fopen(fileName,"wb+");
-    char carac[1024] = {0};
+    char carac[1] = {0};
     for(int i=0; i< tamanioKB;i++){
-        fwrite(&carac,1,sizeof(char[1024]), file);
+        fwrite(&carac,1,sizeof(char[1]), file);
     }
     std::cout << "MKDISK "<< path <<" creado"<< std::endl;
     fclose(file);

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   cout << "************** 202001574 ****************" << endl;
   cout << "*****************************************" << endl;
 
-
+/*
 // tamaño de mdr
   // tamaño del archivo
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
   mbr.mbr_partitions[0].part_s = 100;
   mbr.mbr_partitions[0].part_status='1';
 
-  mbr.mbr_partitions[3].part_start = 200;
+  mbr.mbr_partitions[3].part_start = 201;
   mbr.mbr_partitions[3].part_s = 100;
   mbr.mbr_partitions[3].part_status='1';
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
   int Final=0;
 
 
-  int tamañoRequerido=1000;
+    int tamañoRequerido=100;
     int espacioMasAmplio=0;
     int espacioActual=0;
     int seEncontroEn=0;
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 
 
 
-  /*
+
   //BF -----------------------------------------------------------------------------------------------
 
     int espacioMenosAmplio=tamañoArchivo;
@@ -352,11 +352,11 @@ int main(int argc, char *argv[])
        mbr.mbr_partitions[0].part_s = tamañoRequerido;
        mbr.mbr_partitions[0].part_status='1';
 
-   }*/
+   }
 
 
 
-  /*
+
   //FF -----------------------------------------------------------------------------------------------
 
   int espacioEncontrado=0;
@@ -454,7 +454,7 @@ int main(int argc, char *argv[])
 
   }
 
-  cout<<noHayParticiones<<endl;*/
+  cout<<noHayParticiones<<endl;
 
 
 
@@ -478,11 +478,7 @@ int main(int argc, char *argv[])
 
   return 0;
 
-
-
-
-
-
+*/
 
 
 
@@ -493,7 +489,10 @@ int main(int argc, char *argv[])
     //Pedimos el comando
     cout<< "> ";
     //scanf(" %[^\n]",comando);
-    string entrada = "mkdisk >size=3000 >unit=K >path=/home/ubuntu/ARCHIVOS/Disco1.dsk \n fdisk >size=300 >path=/home/ubuntu/ARCHIVOS/Disco1.dsk >name=Particion1";
+    string entrada = "mkdisk >size=3000 >unit=k >path=/home/ubuntu/ARCHIVOS/Disco1.dsk \n fdisk >size=300 >unit=K >path=/home/ubuntu/ARCHIVOS/Disco1.dsk >name=Particion1 >fit=ff \n fdisk >size=300 >unit=b >path=/home/ubuntu/ARCHIVOS/Disco1.dsk >name=Particion4 >fit=ff \n fdisk >size=500 >unit=b >path=/home/ubuntu/ARCHIVOS/Disco1.dsk >name=Particion2 >fit=ff";
+    //string entrada = "fdisk >size=300 >unit=b >path=/home/ubuntu/ARCHIVOS/Disco1.dsk >name=Particion4 >fit=bf";
+    //string entrada = "fdisk >delete=full >name=Particion1 >path=/home/ubuntu/ARCHIVOS/Disco1.dsk";
+
 
     //string entrada = "rmdisk >path=/home/ubuntu/ARCHIVOS/Disco1.dsk";
     //Ahora analizamos

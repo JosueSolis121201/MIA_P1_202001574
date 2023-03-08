@@ -208,7 +208,7 @@ void analizar_fdisk(char *parametros){
             disco->type = valor;
         } else if (tipo == ">fit"){
             disco->fit = valor;
-        } else if (tipo == ">borrar"){
+        } else if (tipo == ">delete"){
             disco->borrar = valor;
         }else if (tipo == ">add"){
             disco->add = valor;
